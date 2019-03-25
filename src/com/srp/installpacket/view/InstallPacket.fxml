@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="mainPane" minHeight="400.0" minWidth="400.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.srp.installpacket.view.InstallPacketCodeBehind">
+   <children>
+      <Label layoutX="14.0" layoutY="91.0" text="Sales Order CSV File" />
+      <Label layoutX="13.0" layoutY="143.0" text="Sales Order Number" />
+      <TextField fx:id="csvFileTextField" layoutX="135.0" layoutY="87.0" />
+      <TextField fx:id="salesOrderTextField" layoutX="135.0" layoutY="139.0" />
+      <Button fx:id="selectCSVFileButton" layoutX="305.0" layoutY="87.0" mnemonicParsing="false" onAction="#openCSVFile" text="Select" />
+      <Button fx:id="createInstallButton" layoutX="148.0" layoutY="241.0" mnemonicParsing="false" onAction="#createInstallPacket" text="Create Install Packet" />
+      <CheckBox fx:id="srpcheckBox" layoutX="160.0" layoutY="192.0" mnemonicParsing="false" onAction="#addSRPGuideLine" text="SRP Packet" />
+      <CheckBox fx:id="gfpCheckBox" layoutX="160.0" layoutY="216.0" mnemonicParsing="false" onAction="#addGFPGuideLine" text="GFP Packet" />
+   </children>
+</AnchorPane>
