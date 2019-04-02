@@ -10,6 +10,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
@@ -23,6 +24,9 @@ public class InstallPacketCodeBehind {
 
 	@FXML
 	private AnchorPane mainPane;
+
+	@FXML
+	private Label soLabel;
 
 	@FXML
 	private TextField salesOrderTextField;
@@ -46,28 +50,28 @@ public class InstallPacketCodeBehind {
 	}
 
 	public void initialize() {
-		this.csvFileTextField.textProperty().bindBidirectional(this.viewmodel.csvLocationProperty());
 		this.salesOrderTextField.textProperty().bindBidirectional(this.viewmodel.soNumberProperty());
 		this.setupBindings();
 	}
 
 	private void setupBindings() {
-		this.createInstallButton.disableProperty().bind(
-				this.salesOrderTextField.textProperty().isEmpty().and(this.csvFileTextField.textProperty().isEmpty()));
-		this.csvFileTextField.disableProperty().bind(this.salesOrderTextField.textProperty().isNotEmpty());
-		this.salesOrderTextField.disableProperty().bind(this.csvFileTextField.textProperty().isNotEmpty());
+		this.createInstallButton.disableProperty().bind(this.salesOrderTextField.textProperty().isEmpty());
 
 	}
 
 	@FXML
 	void createInstallPacket() {
+		this.viewmodel.soNumberProperty().set(this.salesOrderTextField.getText());
 		if (this.salesOrderTextField.textProperty().get().matches("SO\\d{7}")) {
 			if (this.srpcheckBox.isSelected()) {
 				this.viewmodel.createInstallPacket("SRP");
+				this.viewmodel.alertMissingManuals();
 			} else if (this.gfpCheckBox.isSelected()) {
 				this.viewmodel.createInstallPacket("GFP");
+				this.viewmodel.alertMissingManuals();
 			} else {
 				this.viewmodel.createInstallPacket("None");
+				this.viewmodel.alertMissingManuals();
 			}
 
 		} else {

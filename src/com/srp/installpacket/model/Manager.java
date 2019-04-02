@@ -14,11 +14,11 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
 public class Manager {
-	private static final String MASTER_FILE = "C:\\Users\\jeremy.trimble\\Documents\\Projects\\PDFMerger\\TopLevelFileLocations.csv";
+	private static final String MASTER_FILE = "\\\\ga-fp1\\netsuitedata\\InstallPDFs\\TopLevelFileLocationsV2.csv";
 	private static final String SAVE_TO = "\\\\ga-fp1\\netsuitedata\\InstallPDFs\\";
 	private static final String CSV_LOCATION = "\\\\ga-fp1\\netsuitedata\\InstallCSVs\\";
-	private static final String SRP_INSTALL = "\\\\ga-fp1\\Playland\\INSTALLATION GUIDELINES - PDF FILES\\PLAYGROUNDS\\~INST_INSTALLATION INTRODUCTION - SRP - 2017.pdf";
-	private static final String GENERAL_MAINTENANCE = "\\\\ga-fp1\\Playland\\INSTALLATION GUIDELINES - PDF FILES\\PLAYGROUNDS\\GENERAL MAINTENANCE CHECKLIST.pdf";
+	private static final String SRP_INSTALL = "\\\\fgoengsrv1\\data\\GFP NetSuite Uploads\\INST Files\\Playgrounds\\INST_INSTALLATION INTRODUCTION - SRP - 2017.pdf";
+	private static final String GENERAL_MAINTENANCE = "\\\\ga-fp1\\PLayland\\INSTALLATION GUIDELINES - PDF FILES\\PLAYGROUNDS\\GENERAL MAINTENANCE CHECKLIST.pdf";
 	private String soNumber;
 	private List<String> missingManuals;
 
@@ -27,28 +27,29 @@ public class Manager {
 		this.missingManuals = new ArrayList<String>();
 	}
 
-	public void createInstallPacket(String brand) {
+	public void createInstallPacket(String brand, String filePath) {
 
 		try {
 			PDFMergerUtility merger = new PDFMergerUtility();
 			DataReader reader = new DataReader(new File(Manager.MASTER_FILE));
 			HashMap<String, String> manualsMaster = reader.readMasterFile();
 			PDDocument newDoc = createSaveToFile();
-			this.addIntroAndMaintenance(merger, brand);
-			List<String> locations = makeLocationAndMissingList(reader, manualsMaster);
 
+			List<String> intro = this.addIntroAndMaintenance(merger, brand);
+			List<String> locations = this.makeLocationAndMissingList(reader, manualsMaster, filePath, intro);
+			System.out.println(locations);
 			for (String currentLocation : locations) {
 				if (currentLocation != null) {
 					File newfile = new File(currentLocation);
 					merger.addSource(newfile);
-					System.out.println("Found");
+					// System.out.println(currentLocation);
 				}
 			}
-
-			merger.setDestinationFileName(Manager.SAVE_TO + this.soNumber + ".pdf");
+			merger.setDestinationFileName(Manager.SAVE_TO + this.soNumber + "_INSTALLS.pdf");
 			merger.mergeDocuments(null);
 
 			newDoc.close();
+
 		} catch (FileNotFoundException fnfe) {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setContentText(fnfe.getMessage());
@@ -58,62 +59,40 @@ public class Manager {
 		} catch (Exception ioe) {
 			System.err.println(ioe.getMessage());
 		}
+		this.throwEnd();
 	}
 
-	private List<String> makeLocationAndMissingList(DataReader reader, HashMap<String, String> manualsMaster)
-			throws FileNotFoundException {
-		List<String> manuals = reader.readTopLevelFile(new File(CSV_LOCATION + this.soNumber + ".csv"));
-		List<String> locations = new ArrayList<String>();
+	private void throwEnd() {
+		Alert end = new Alert(AlertType.INFORMATION);
+		end.setContentText("Merge Complete");
+		end.setTitle("Merge Complete");
+		end.showAndWait();
+
+	}
+
+	private List<String> makeLocationAndMissingList(DataReader reader, HashMap<String, String> manualsMaster,
+			String filePath, List<String> locations) throws FileNotFoundException {
+		List<String> manuals = reader.readTopLevelFile(new File(filePath));
+
 		for (String current : manuals) {
 			if (manualsMaster.containsKey(current)) {
 				String location = manualsMaster.get(current);
-				if (locations.isEmpty() || !locations.contains(location) && !location.contains(GENERAL_MAINTENANCE)
-						&& !location.contains(SRP_INSTALL)) {
+				if (locations.isEmpty()
+						|| !locations.contains(location) && !location.equalsIgnoreCase(Manager.SRP_INSTALL)
+								&& !location.equalsIgnoreCase(Manager.GENERAL_MAINTENANCE)) {
 					locations.add(location);
+					System.out.println(location);
 				}
 			} else {
 				this.missingManuals.add(current);
 			}
 		}
+		System.out.println("Done finding files");
 		return locations;
 	}
 
-	public void createInstallPacketWithCSV(String brand, String filePath) {
-
-		try {
-			PDFMergerUtility merger = new PDFMergerUtility();
-			DataReader reader = new DataReader(new File(Manager.MASTER_FILE));
-			HashMap<String, String> manualsMaster = reader.readMasterFile();
-			PDDocument newDoc = createSaveToFile();
-			this.addIntroAndMaintenance(merger, brand);
-			List<String> manuals = reader.readTopLevelFile(new File(filePath));
-			for (String current : manuals) {
-				String location = manualsMaster.get(current);
-				if (location != null) {
-					File newfile = new File(location);
-					merger.addSource(newfile);
-					System.out.println("Found");
-				} else {
-					this.missingManuals.add(current);
-				}
-			}
-			merger.setDestinationFileName(Manager.SAVE_TO + this.soNumber + ".pdf");
-			merger.mergeDocuments(null);
-
-			newDoc.close();
-		} catch (FileNotFoundException fnfe) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setContentText("There is not a csv file named " + this.soNumber
-					+ " in the InstallCSV Folder on NetsuiteData Drive");
-			alert.showAndWait();
-
-		} catch (Exception ioe) {
-			System.err.println(ioe.getMessage());
-		}
-	}
-
 	private PDDocument createSaveToFile() throws IOException {
-		File file = new File(Manager.SAVE_TO + this.soNumber + ".pdf");
+		File file = new File(Manager.SAVE_TO + this.soNumber + "_INSTALLS.pdf");
 
 		if (file.exists()) {
 			PDDocument test = new PDDocument();
@@ -123,28 +102,60 @@ public class Manager {
 		return null;
 	}
 
-	private void addIntroAndMaintenance(PDFMergerUtility merger, String brand) {
-		try {
-			if (brand.equals("SRP")) {
-				File srpIntro = new File(Manager.SRP_INSTALL);
-				File srpMaintenance = new File(Manager.GENERAL_MAINTENANCE);
-				merger.addSource(srpIntro);
-				merger.addSource(srpMaintenance);
-			}
-			// if(brand.equals("GFP")) {
-			// File srpIntro = new file(Manager.GFP_INSTALL);
-			// File srpMaintenance = new File(Manager.GFP_GENERAL_MAINTENANCE);
+	private List<String> addIntroAndMaintenance(PDFMergerUtility merger, String brand) {
+		List<String> locations = new ArrayList<String>();
+		if (brand.equals("SRP")) {
+			// File srpIntro = new File(Manager.SRP_INSTALL);
+			// File srpMaintenance = new File(Manager.GENERAL_MAINTENANCE);
+			locations.add(Manager.SRP_INSTALL);
+			locations.add(Manager.GENERAL_MAINTENANCE);
 			// merger.addSource(srpIntro);
 			// merger.addSource(srpMaintenance);
-
-		} catch (FileNotFoundException fnfe) {
-			System.err.println(fnfe.getMessage());
 		}
+		// if(brand.equals("GFP")) {
+		// File srpIntro = new file(Manager.GFP_INSTALL);
+		// File srpMaintenance = new File(Manager.GFP_GENERAL_MAINTENANCE);
+		// merger.addSource(srpIntro);
+		// merger.addSource(srpMaintenance);
 
+		return locations;
 	}
 
 	public List<String> getMissingManuals() {
 		return this.missingManuals;
 	}
 
+	// public void createInstallPacketWithCSV(String brand, String filePath) {
+	//
+	// try {
+	// PDFMergerUtility merger = new PDFMergerUtility();
+	// DataReader reader = new DataReader(new File(Manager.MASTER_FILE));
+	// HashMap<String, String> manualsMaster = reader.readMasterFile();
+	// PDDocument newDoc = createSaveToFile();
+	// this.addIntroAndMaintenance(merger, brand);
+	// List<String> manuals = reader.readTopLevelFile(new File(filePath));
+	// for (String current : manuals) {
+	// String location = manualsMaster.get(current);
+	// if (location != null) {
+	// File newfile = new File(location);
+	// merger.addSource(newfile);
+	// System.out.println("Found");
+	// } else {
+	// this.missingManuals.add(current);
+	// }
+	// }
+	// merger.setDestinationFileName(Manager.SAVE_TO + this.soNumber + ".pdf");
+	// merger.mergeDocuments(null);
+	//
+	// newDoc.close();
+	// } catch (FileNotFoundException fnfe) {
+	// Alert alert = new Alert(AlertType.ERROR);
+	// alert.setContentText("There is not a csv file named " + this.soNumber
+	// + " in the InstallCSV Folder on NetsuiteData Drive");
+	// alert.showAndWait();
+	//
+	// } catch (Exception ioe) {
+	// System.err.println(ioe.getMessage());
+	// }
+	// }
 }

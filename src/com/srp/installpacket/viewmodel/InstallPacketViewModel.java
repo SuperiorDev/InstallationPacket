@@ -22,14 +22,15 @@ public class InstallPacketViewModel {
 	}
 
 	public void createInstallPacket(String brand) {
-		Manager manager = new Manager(this.soNumberProperty.get());
-		if (this.csvLocationProperty.get() != null) {
-			manager.createInstallPacketWithCSV(brand, this.csvLocationProperty.get());
-		} else {
-			manager.createInstallPacket(brand);
-		}
+		this.manager = new Manager(this.soNumberProperty.get());
 
-		List<String> missingManuals = manager.getMissingManuals();
+		if (this.csvLocationProperty.get() != null) {
+			manager.createInstallPacket(brand, this.csvLocationProperty().get());
+		}
+	}
+
+	public void alertMissingManuals() {
+		List<String> missingManuals = this.manager.getMissingManuals();
 		if (!missingManuals.isEmpty()) {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Manuals missing file");
