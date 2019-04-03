@@ -9,20 +9,21 @@
 
 <AnchorPane fx:id="mainPane" minHeight="400.0" minWidth="400.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.srp.installpacket.view.InstallPacketCodeBehind">
    <children>
+      <Button fx:id="selectCSVFileButton" layoutX="137.0" layoutY="56.0" mnemonicParsing="false" onAction="#openCSVFile" text=" Select a CSV">
+         <font>
+            <Font size="18.0" />
+         </font></Button>
       <Label fx:id="soLabel" layoutX="138.0" layoutY="122.0" text="Sales Order Number">
          <font>
             <Font size="14.0" />
          </font></Label>
       <TextField fx:id="salesOrderTextField" layoutX="126.0" layoutY="149.0" />
-      <Button fx:id="selectCSVFileButton" layoutX="137.0" layoutY="56.0" mnemonicParsing="false" onAction="#openCSVFile" text=" Select a CSV">
-         <font>
-            <Font size="18.0" />
-         </font></Button>
-      <Button fx:id="createInstallButton" layoutX="108.0" layoutY="257.0" mnemonicParsing="false" onAction="#createInstallPacket" text="Create Install Packet">
-         <font>
-            <Font size="18.0" />
-         </font></Button>
       <CheckBox fx:id="srpcheckBox" layoutX="160.0" layoutY="192.0" mnemonicParsing="false" onAction="#addSRPGuideLine" text="SRP Packet" textFill="#f7be00" />
       <CheckBox fx:id="gfpCheckBox" layoutX="160.0" layoutY="216.0" mnemonicParsing="false" onAction="#addGFPGuideLine" text="GFP Packet" textFill="#f7be00" />
+      <Button fx:id="createInstallButton" layoutX="109.0" layoutY="276.0" mnemonicParsing="false" onAction="#createInstallPacket" text="Create Install Packet">
+         <font>
+            <Font size="18.0" />
+         </font></Button>
+      <CheckBox fx:id="r3CheckBox" layoutX="161.0" layoutY="243.0" mnemonicParsing="false" text="R3 Packet" textFill="#f7be00" />
    </children>
 </AnchorPane>

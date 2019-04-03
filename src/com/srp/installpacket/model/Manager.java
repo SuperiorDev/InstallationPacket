@@ -19,6 +19,8 @@ public class Manager {
 	private static final String CSV_LOCATION = "\\\\ga-fp1\\netsuitedata\\InstallCSVs\\";
 	private static final String SRP_INSTALL = "\\\\fgoengsrv1\\data\\GFP NetSuite Uploads\\INST Files\\Playgrounds\\INST_INSTALLATION INTRODUCTION - SRP - 2017.pdf";
 	private static final String GENERAL_MAINTENANCE = "\\\\ga-fp1\\PLayland\\INSTALLATION GUIDELINES - PDF FILES\\PLAYGROUNDS\\GENERAL MAINTENANCE CHECKLIST.pdf";
+	private static final String GFP_INSTALL = "\\\\fgoengsrv1\\data\\GFP NetSuite Uploads\\INST Files\\GFP\\INST_Installation Introduction - 2015 - v2.pdf";
+	private static final String R3_INSTALL = "\\\\fgoengsrv1\\data\\GFP NetSuite Uploads\\INST Files\\R3_Originals\\INST_R3 RECYCLED LINE - INSTALLATION INTRODUCTION.pdf";
 	private String soNumber;
 	private List<String> missingManuals;
 
@@ -112,11 +114,13 @@ public class Manager {
 			// merger.addSource(srpIntro);
 			// merger.addSource(srpMaintenance);
 		}
-		// if(brand.equals("GFP")) {
-		// File srpIntro = new file(Manager.GFP_INSTALL);
-		// File srpMaintenance = new File(Manager.GFP_GENERAL_MAINTENANCE);
-		// merger.addSource(srpIntro);
-		// merger.addSource(srpMaintenance);
+		if (brand.equals("GFP")) {
+			locations.add(Manager.GFP_INSTALL);
+		}
+
+		if (brand.equals("R3")) {
+			locations.add(Manager.R3_INSTALL);
+		}
 
 		return locations;
 	}

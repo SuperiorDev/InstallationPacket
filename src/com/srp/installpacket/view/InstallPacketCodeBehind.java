@@ -43,6 +43,9 @@ public class InstallPacketCodeBehind {
 	@FXML
 	private CheckBox gfpCheckBox;
 
+	@FXML
+	private CheckBox r3CheckBox;
+
 	private InstallPacketViewModel viewmodel;
 
 	public InstallPacketCodeBehind() {
@@ -68,6 +71,9 @@ public class InstallPacketCodeBehind {
 				this.viewmodel.alertMissingManuals();
 			} else if (this.gfpCheckBox.isSelected()) {
 				this.viewmodel.createInstallPacket("GFP");
+				this.viewmodel.alertMissingManuals();
+			} else if (this.gfpCheckBox.isSelected()) {
+				this.viewmodel.createInstallPacket("R3");
 				this.viewmodel.alertMissingManuals();
 			} else {
 				this.viewmodel.createInstallPacket("None");
